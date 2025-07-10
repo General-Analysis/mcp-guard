@@ -1,6 +1,6 @@
 {
   "name": "@general-analysis/mcp-guard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An MCP guardrail with built-in AI-powered moderation that aggregates multiple MCP servers into one secure interface",
   "type": "module",
   "main": "dist/index.js",
