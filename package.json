@@ -1,7 +1,7 @@
 {
-  "name": "ga-mcp-guard",
+  "name": "@general-analysis/mcp-guard",
   "version": "1.0.1",
-  "description": "An MCP server wrapper with built-in moderation that aggregates multiple MCP servers into one",
+  "description": "An MCP guardrail with built-in AI-powered moderation that aggregates multiple MCP servers into one secure interface",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -21,17 +21,19 @@
   "keywords": [
     "mcp",
     "server",
-    "wrapper",
+    "guardrail",
     "moderation",
-    "ai-safety"
+    "ai-safety",
+    "security",
+    "prompt-injection"
   ],
   "author": "General Analysis",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/generalanalysis/ga-mcp-guard.git"
+    "url": "https://github.com/General-Analysis/mcp-guard.git"
   },
-  "homepage": "https://github.com/generalanalysis/ga-mcp-guard#readme",
+  "homepage": "https://github.com/General-Analysis/mcp-guard#readme",
   "devDependencies": {
     "@types/node": "^20.11.0",
     "tsx": "^4.7.0",
