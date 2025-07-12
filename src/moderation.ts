@@ -1,4 +1,4 @@
-import { GuardApiResponse, BLOCKED_RESPONSE } from "./types.js";
+import { GuardApiResponse, BLOCKED_RESPONSE, createPaymentRequiredResponse } from "./types.js";
 
 // API Configuration
 const API_URL = "https://api.generalanalysis.com";
@@ -46,6 +46,12 @@ export async function moderateToolOutput(
           clearTimeout(timeoutId);
 
           if (!response.ok) {
+            // Handle 402 Payment Required specifically
+            if (response.status === 402) {
+              // Return original output with payment warning
+              return createPaymentRequiredResponse(output);
+            }
+            
             throw new Error(
               `Guard API returned error: ${response.status} ${response.statusText}`
             );

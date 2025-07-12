@@ -50,7 +50,7 @@ For local MCP servers that communicate via stdio:
   "command": "node",
   "args": ["path/to/server.js"],
   "env": {
-    "API_KEY": "your-api-key"
+    "API_KEY": "your-general-analysis-api-key"
   }
 }
 ```
@@ -68,7 +68,7 @@ For remote MCP servers accessible via HTTP or Server-Sent Events:
 
 ### Environment Variables
 
-- `API_KEY` - Your API key for the moderation service
+- `API_KEY` - Your General Analysis API key for the moderation service
 - `ENABLE_GUARD_API` - Set to `"true"` to enable AI-powered moderation (requires API_KEY)
 
 ### Complete Example for Cursor/Claude Desktop
@@ -86,7 +86,7 @@ Add this to your MCP configuration file:
         "[{\"name\":\"local-filesystem\",\"command\":\"npx\",\"args\":[\"@modelcontextprotocol/server-filesystem\",\"/path/to/files\"]},{\"name\":\"remote-api\",\"url\":\"https://api.example.com/mcp\"}]"
       ],
       "env": {
-        "API_KEY": "your-api-key",
+        "API_KEY": "your-general-analysis-api-key",
         "ENABLE_GUARD_API": "true"
       }
     }
@@ -98,7 +98,7 @@ Add this to your MCP configuration file:
 
 ```bash
 # Set environment variables
-export API_KEY="your-api-key"
+export API_KEY="your-general-analysis-api-key"
 export ENABLE_GUARD_API="true"
 
 # Run with mixed local and remote servers
@@ -142,7 +142,7 @@ The guardrail provides multiple layers of security:
 ## Requirements
 
 - Node.js >= 18.0.0
-- Valid API key (when moderation is enabled)
+- Valid General Analysis API key (when moderation is enabled)
 
 ## License
 

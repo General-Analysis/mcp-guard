@@ -1,6 +1,6 @@
 {
   "name": "@general-analysis/mcp-guard",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "An MCP guardrail with built-in AI-powered moderation that aggregates multiple MCP servers into one secure interface",
   "type": "module",
   "main": "dist/index.js",
@@ -40,7 +40,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.15.1",
     "dotenv": "^16.6.1",
     "zod": "^3.22.4"
   },
