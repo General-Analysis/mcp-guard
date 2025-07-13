@@ -11,6 +11,23 @@ The MCP Guardrail acts as a security layer that sits between your AI application
 - **Dual connectivity** - supports both local and remote MCP servers
 - **Transparent proxying** - tools, prompts, and resources are automatically prefixed and made available
 
+## Quick Start
+
+The easiest way to get started is using the General Analysis CLI tool:
+
+```bash
+# Install the CLI tool
+pip3 install generalanalysis
+
+# Login to your account
+ga login
+
+# Configure MCP settings for Cursor, Claude Desktop, and Claude Code
+ga configure
+```
+
+This will automatically update your MCP configuration files with the guardrail setup.
+
 ## Usage
 
 ### Direct Usage with npx

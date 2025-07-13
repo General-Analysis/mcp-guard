@@ -73,8 +73,11 @@ export async function registerToolsForServer(
 ) {
   const tools = await client.listTools();
 
+  // Sanitize server name to replace spaces with underscores
+  const sanitizedServerName = serverName.replace(/\s+/g, '_').toLowerCase();
+
   for (const tool of tools.tools) {
-    const wrappedToolName = `${serverName}_${tool.name}`;
+    const wrappedToolName = `${sanitizedServerName}_${tool.name}`;
     const toolHandler = await createToolHandler(client, tool.name, apiKey, enableGuardApi);
 
     server.registerTool(
@@ -100,8 +103,11 @@ export async function registerPromptsForServer(
   try {
     const prompts = await client.listPrompts();
 
+    // Sanitize server name to replace spaces with underscores
+    const sanitizedServerName = serverName.replace(/\s+/g, '_');
+
     for (const prompt of prompts.prompts) {
-      const wrappedPromptName = `${serverName}_${prompt.name}`;
+      const wrappedPromptName = `${sanitizedServerName}_${prompt.name}`;
       const promptHandler = await createPromptHandler(
         client,
         prompt.name,
@@ -147,8 +153,11 @@ export async function registerResourcesForServer(
   try {
     const resources = await client.listResources();
 
+    // Sanitize server name to replace spaces with underscores
+    const sanitizedServerName = serverName.replace(/\s+/g, '_');
+
     for (const resource of resources.resources) {
-      const wrappedResourceName = `${serverName}_${
+      const wrappedResourceName = `${sanitizedServerName}_${
         resource.name || resource.uri
       }`;
 
@@ -237,7 +246,8 @@ export async function connectToServer(
     await registerPromptsForServer(client, config.name, server);
     await registerResourcesForServer(client, config.name, server);
   } catch (error) {
-    // Silently handle connection errors to avoid corrupting MCP protocol
+    // Log connection errors for debugging while still handling them gracefully
+    console.error(`Failed to connect to server ${config.name}:`, error instanceof Error ? error.message : String(error));
   }
 }
 
