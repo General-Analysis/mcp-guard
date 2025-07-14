@@ -1,3 +1,5 @@
+![MCP Guardrail](image.png)
+
 # MCP Guardrail
 
 An MCP (Model Context Protocol) guardrail with built-in AI-powered moderation that aggregates multiple MCP servers into one secure interface.
