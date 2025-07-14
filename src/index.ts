@@ -86,9 +86,24 @@ function getServerConfigs(): ServerConfig[] {
     throw new Error("Server configs must be an array");
   }
 
-  const serverConfigs = serverConfigsList.map((config: any) =>
-    ServerConfigSchema.parse(config)
-  );
+  const serverConfigs = serverConfigsList.map((config: any) => {
+    // Handle command parsing for configurations that have the entire command in the command field
+    if (config.command && (!config.args || config.args.length === 0)) {
+      // Split the command into command and args
+      const commandParts = config.command.split(/\s+/);
+      if (commandParts.length > 1) {
+        config.command = commandParts[0];
+        config.args = commandParts.slice(1);
+      }
+    }
+    
+    const parsedConfig = ServerConfigSchema.parse(config);
+    // Sanitize server name to remove spaces and make lowercase
+    return {
+      ...parsedConfig,
+      name: parsedConfig.name.replace(/\s+/g, '').toLowerCase()
+    };
+  });
   return serverConfigs;
 }
 

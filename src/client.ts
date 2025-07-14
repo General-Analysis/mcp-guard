@@ -73,11 +73,9 @@ export async function registerToolsForServer(
 ) {
   const tools = await client.listTools();
 
-  // Sanitize server name to replace spaces with underscores
-  const sanitizedServerName = serverName.replace(/\s+/g, '_').toLowerCase();
-
+  // Server name is already sanitized and lowercased at config parsing time
   for (const tool of tools.tools) {
-    const wrappedToolName = `${sanitizedServerName}_${tool.name}`;
+    const wrappedToolName = `${serverName}_${tool.name}`;
     const toolHandler = await createToolHandler(client, tool.name, apiKey, enableGuardApi);
 
     server.registerTool(
@@ -103,11 +101,9 @@ export async function registerPromptsForServer(
   try {
     const prompts = await client.listPrompts();
 
-    // Sanitize server name to replace spaces with underscores
-    const sanitizedServerName = serverName.replace(/\s+/g, '_');
-
+    // Server name is already sanitized and lowercased at config parsing time
     for (const prompt of prompts.prompts) {
-      const wrappedPromptName = `${sanitizedServerName}_${prompt.name}`;
+      const wrappedPromptName = `${serverName}_${prompt.name}`;
       const promptHandler = await createPromptHandler(
         client,
         prompt.name,
@@ -153,11 +149,9 @@ export async function registerResourcesForServer(
   try {
     const resources = await client.listResources();
 
-    // Sanitize server name to replace spaces with underscores
-    const sanitizedServerName = serverName.replace(/\s+/g, '_');
-
+    // Server name is already sanitized and lowercased at config parsing time
     for (const resource of resources.resources) {
-      const wrappedResourceName = `${sanitizedServerName}_${
+      const wrappedResourceName = `${serverName}_${
         resource.name || resource.uri
       }`;
 
