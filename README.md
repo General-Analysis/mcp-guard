@@ -4,10 +4,12 @@ An MCP (Model Context Protocol) guardrail with built-in AI-powered moderation th
 
 ## Overview
 
-The MCP Guardrail acts as a security layer that sits between your AI applications and MCP servers, providing:
+The MCP Guardrail provides AI-powered security and easy configuration for your MCP (Model Context Protocol) setup. It automatically detects your existing MCP configuration files and adds a protective layer with intelligent moderation capabilities.
+
+Key features:
 
 - **AI-powered moderation** to prevent prompt injection attacks
-- **Server aggregation** - connect to multiple MCP servers through a single interface
+- **Automatic configuration** - CLI tool detects and updates MCP config files for Cursor, Claude Desktop, and Claude Code
 - **Dual connectivity** - supports both local and remote MCP servers
 - **Transparent proxying** - tools, prompts, and resources are automatically prefixed and made available
 
@@ -37,7 +39,7 @@ No installation required! Use directly in your Cursor or Claude Desktop MCP conf
 ```json
 {
   "mcpServers": {
-    "guardrail": {
+    "protected_server": {
       "command": "npx",
       "args": [
         "-y",
@@ -63,11 +65,19 @@ For local MCP servers that communicate via stdio:
 
 ```json
 {
-  "name": "my-local-server",
-  "command": "node",
-  "args": ["path/to/server.js"],
-  "env": {
-    "API_KEY": "your-general-analysis-api-key"
+  "mcpServers": {
+    "protected_server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@general-analysis/mcp-guard",
+        "[{\"name\":\"my-local-server\",\"command\":\"node\",\"args\":[\"path/to/server.js\"]}]"
+      ],
+      "env": {
+        "API_KEY": "your-general-analysis-api-key",
+        "ENABLE_GUARD_API": "true"
+      }
+    }
   }
 }
 ```
@@ -78,8 +88,20 @@ For remote MCP servers accessible via HTTP or Server-Sent Events:
 
 ```json
 {
-  "name": "my-remote-server",
-  "url": "https://api.example.com/mcp"
+  "mcpServers": {
+    "protected_server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@general-analysis/mcp-guard",
+        "[{\"name\":\"my-remote-server\",\"url\":\"https://api.example.com/mcp\"}]"
+      ],
+      "env": {
+        "API_KEY": "your-general-analysis-api-key",
+        "ENABLE_GUARD_API": "true"
+      }
+    }
+  }
 }
 ```
 
@@ -132,29 +154,6 @@ npx -y @general-analysis/mcp-guard '[
 ]'
 ```
 
-## How It Works
-
-1. **Server Aggregation**: The guardrail connects to all configured MCP servers (both local and remote)
-2. **Tool Prefixing**: Each tool is prefixed with the server name (e.g., `server1_tool_name`)
-3. **Moderation**: When enabled, tool outputs are analyzed for potential prompt injection attempts
-4. **Security**: Suspicious responses are blocked and replaced with a safety message
-
-## Features
-
-- **Local Server Support**: Connect to MCP servers running as local processes
-- **Remote Server Support**: Connect to MCP servers via HTTP or SSE endpoints
-- **AI Moderation**: Optional AI-powered content filtering to prevent prompt injection
-- **Transparent Proxying**: All MCP capabilities (tools, prompts, resources) are preserved
-- **Error Handling**: Graceful handling of connection failures and server errors
-
-## Security
-
-The guardrail provides multiple layers of security:
-
-- **Input validation** using Zod schemas
-- **Output moderation** to detect and block prompt injection attempts
-- **Isolation** between different MCP servers
-- **Safe defaults** when moderation is enabled
 
 ## Requirements
 
