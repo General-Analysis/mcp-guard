@@ -74,3 +74,4 @@ temp/
 
 # Test and development files (not for repository)
 test.js 
+.smithery/

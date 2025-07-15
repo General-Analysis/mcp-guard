@@ -1,8 +1,6 @@
 name: mcp-guard
-command: node
-args:
-  - /app/dist/index.js
-  - "[]"  # Empty array of servers by default, can be overridden
+runtime: typescript
+module: src/index.ts
 description: |
   An MCP guardrail with built-in AI-powered moderation that aggregates multiple MCP servers into one secure interface.
   
@@ -13,24 +11,41 @@ description: |
   
   ## Configuration
   
-  The server expects a JSON array of server configurations as the second argument. Each server config should have:
+  The server configuration accepts:
+  - servers: An array of server configurations to aggregate
+  - apiKey: API key for General Analysis moderation service
+  - enableGuardApi: Enable AI-powered moderation (default: false)
+  
+  Each server config should have:
   - name: The name of the server
-  - command: The command to run the server
-  - args: Array of arguments for the command
+  - For local servers:
+    - command: The command to run the server
+    - args: Array of arguments for the command
+    - env: Optional environment variables
+  - For remote servers:
+    - url: The URL of the remote server
   
   Example configuration:
   ```json
-  [{
-    "name": "filesystem",
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/directory"]
-  }]
+  {
+    "servers": [{
+      "name": "filesystem",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/directory"]
+    }],
+    "apiKey": "your-api-key",
+    "enableGuardApi": true
+  }
   ```
   
   ## Environment Variables
   
-  - API_KEY: API key for General Analysis moderation service (required if ENABLE_GUARD_API is true)
-  - ENABLE_GUARD_API: Set to "true" to enable AI-powered moderation (default: "false")
-env:
-  API_KEY: ""
-  ENABLE_GUARD_API: "false" 
+  You can also configure via environment variables:
+  - API_KEY: API key for General Analysis moderation service
+  - ENABLE_GUARD_API: Set to "true" to enable AI-powered moderation
+  
+  Config values take precedence over environment variables.
+config:
+  servers: []
+  apiKey: ""
+  enableGuardApi: false 
