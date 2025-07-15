@@ -32,5 +32,5 @@ description: |
   - API_KEY: API key for General Analysis moderation service (required if ENABLE_GUARD_API is true)
   - ENABLE_GUARD_API: Set to "true" to enable AI-powered moderation (default: "false")
 env:
-  API_KEY: "your-general-analysis-api-key"
-  ENABLE_GUARD_API: "true" 
+  API_KEY: ""
+  ENABLE_GUARD_API: "false" 
