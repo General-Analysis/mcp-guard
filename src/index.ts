@@ -120,6 +120,91 @@ export default function ({ config }: { config: z.infer<typeof configSchema> }) {
     }
   );
 
+  // Register a guard info prompt that's always available
+  // This ensures the server always has at least one prompt
+  server.registerPrompt(
+    "mcp_guard_info",
+    {
+      title: "MCP Guard Information",
+      description: "Get information about the MCP Guard and how to use it effectively",
+      argsSchema: {
+        topic: z.enum(["overview", "moderation", "configuration", "troubleshooting"])
+          .optional()
+          .describe("Specific topic to get information about")
+      },
+    },
+    ({ topic }) => {
+      const topics = {
+        overview: "The MCP Guard acts as a security layer that aggregates multiple MCP servers and provides AI-powered moderation for tool outputs to prevent prompt injection attacks.",
+        moderation: ENABLE_GUARD_API 
+          ? "Moderation is ENABLED. Tool outputs are being checked for prompt injection attempts using the General Analysis API."
+          : "Moderation is DISABLED. Enable it by setting enableGuardApi to true and providing an API key.",
+        configuration: `Current configuration:
+- Configured servers: ${serverConfigs.map(s => s.name).join(", ") || "none"}
+- Connected servers: ${Array.from(clients.keys()).join(", ") || "none"}
+- Moderation enabled: ${ENABLE_GUARD_API}
+- API key configured: ${!!API_KEY}`,
+        troubleshooting: `Common issues:
+1. "Method not found" - The guard is still connecting to servers. Use mcp_guard_status tool to check connection status.
+2. Moderation not working - Ensure you have a valid API key and enableGuardApi is set to true.`
+      };
+      
+      const content = topic ? topics[topic] : Object.entries(topics).map(([key, value]) => `${key.toUpperCase()}:\n${value}`).join("\n\n");
+      
+      return {
+        messages: [{
+          role: "assistant",
+          content: {
+            type: "text",
+            text: content
+          }
+        }]
+      };
+    }
+  );
+
+  // Register a guard documentation resource that's always available
+  // This ensures the server always has at least one resource
+  server.registerResource(
+    "mcp_guard_readme",
+    "mcp-guard://readme",
+    {
+      title: "MCP Guard Documentation",
+      description: "Documentation about the MCP Guard and its features",
+      mimeType: "text/markdown"
+    },
+    async (uri) => ({
+      contents: [{
+        uri: uri.href,
+        mimeType: "text/markdown",
+        text: `# MCP Guard Documentation
+
+## Overview
+The MCP Guard is a security layer that aggregates multiple MCP servers and provides AI-powered moderation for tool outputs.
+
+## Features
+- **Server Aggregation**: Connect to multiple MCP servers simultaneously
+- **AI Moderation**: Detect and block prompt injection attempts in tool outputs
+- **Dynamic Registration**: Servers and their capabilities are added as they connect
+- **Transparent Proxying**: All tools, prompts, and resources are prefixed with server names
+
+## Current Status
+- Moderation: ${ENABLE_GUARD_API ? "ENABLED" : "DISABLED"}
+- Configured Servers: ${serverConfigs.length}
+- Connected Servers: ${clients.size}
+
+## Usage
+1. Use the \`mcp_guard_status\` tool to check connection status
+2. Use the \`mcp_guard_info\` prompt to get detailed information
+3. Access this resource for documentation
+
+## Troubleshooting
+If you're seeing "Method not found" errors, the guard may still be connecting to servers. Check the status tool for current connections.
+`
+      }]
+    })
+  );
+
   // Connect to all servers asynchronously
   // Servers will be added dynamically as they connect
   connectToAllServers(serverConfigs, clients, server, API_KEY, ENABLE_GUARD_API)
@@ -188,6 +273,14 @@ async function main() {
   const API_KEY = process.env.API_KEY;
   const ENABLE_GUARD_API = process.env.ENABLE_GUARD_API === "true";
 
+  if (ENABLE_GUARD_API && !API_KEY) {
+    throw new Error(
+      "ENABLE_GUARD_API is true but API_KEY environment variable is not set"
+    );
+  }
+
+  const serverConfigs = getServerConfigs();
+
   // Register status tool for CLI mode
   server.registerTool(
     "mcp_guard_status",
@@ -220,13 +313,90 @@ async function main() {
     }
   );
 
-  if (ENABLE_GUARD_API && !API_KEY) {
-    throw new Error(
-      "ENABLE_GUARD_API is true but API_KEY environment variable is not set"
-    );
-  }
+  // Register guard info prompt for CLI mode
+  server.registerPrompt(
+    "mcp_guard_info",
+    {
+      title: "MCP Guard Information",
+      description: "Get information about the MCP Guard and how to use it effectively",
+      argsSchema: {
+        topic: z.enum(["overview", "moderation", "configuration", "troubleshooting"])
+          .optional()
+          .describe("Specific topic to get information about")
+      },
+    },
+    ({ topic }) => {
+      const topics = {
+        overview: "The MCP Guard acts as a security layer that aggregates multiple MCP servers and provides AI-powered moderation for tool outputs to prevent prompt injection attacks.",
+        moderation: ENABLE_GUARD_API 
+          ? "Moderation is ENABLED. Tool outputs are being checked for prompt injection attempts using the General Analysis API."
+          : "Moderation is DISABLED. Enable it by setting ENABLE_GUARD_API=true and providing an API_KEY.",
+        configuration: `Current configuration:
+- Configured servers: ${serverConfigs.map(s => s.name).join(", ") || "none"}
+- Connected servers: ${Array.from(clients.keys()).join(", ") || "none"}
+- Moderation enabled: ${ENABLE_GUARD_API}
+- API key configured: ${!!API_KEY}`,
+        troubleshooting: `Common issues:
+1. "Method not found" - The guard is still connecting to servers. Use mcp_guard_status tool to check connection status.
+2. No tools showing - Check if your server configurations are correct and the servers are accessible.
+3. Moderation not working - Ensure you have a valid API_KEY environment variable and ENABLE_GUARD_API is set to true.`
+      };
+      
+      const content = topic ? topics[topic] : Object.entries(topics).map(([key, value]) => `${key.toUpperCase()}:\n${value}`).join("\n\n");
+      
+      return {
+        messages: [{
+          role: "assistant",
+          content: {
+            type: "text",
+            text: content
+          }
+        }]
+      };
+    }
+  );
 
-  const serverConfigs = getServerConfigs();
+  // Register guard documentation resource for CLI mode
+  server.registerResource(
+    "mcp_guard_readme",
+    "mcp-guard://readme",
+    {
+      title: "MCP Guard Documentation",
+      description: "Documentation about the MCP Guard and its features",
+      mimeType: "text/markdown"
+    },
+    async (uri) => ({
+      contents: [{
+        uri: uri.href,
+        mimeType: "text/markdown",
+        text: `# MCP Guard Documentation
+
+## Overview
+The MCP Guard is a security layer that aggregates multiple MCP servers and provides AI-powered moderation for tool outputs.
+
+## Features
+- **Server Aggregation**: Connect to multiple MCP servers simultaneously
+- **AI Moderation**: Detect and block prompt injection attempts in tool outputs
+- **Dynamic Registration**: Servers and their capabilities are added as they connect
+- **Transparent Proxying**: All tools, prompts, and resources are prefixed with server names
+
+## Current Status
+- Moderation: ${ENABLE_GUARD_API ? "ENABLED" : "DISABLED"}
+- Configured Servers: ${serverConfigs.length}
+- Connected Servers: ${clients.size}
+
+## Usage
+1. Use the \`mcp_guard_status\` tool to check connection status
+2. Use the \`mcp_guard_info\` prompt to get detailed information
+3. Access this resource for documentation
+
+## Troubleshooting
+If you're seeing "Method not found" errors, the guard may still be connecting to servers. Check the status tool for current connections.
+`
+      }]
+    })
+  );
+
   await connectToAllServers(serverConfigs, clients, server, API_KEY, ENABLE_GUARD_API);
 
   await startWrapperServer(server);
