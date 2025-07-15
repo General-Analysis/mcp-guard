@@ -32,6 +32,19 @@ ga configure
 
 This will automatically update your MCP configuration files with the guardrail setup.
 
+## How It Works
+
+```mermaid
+graph LR
+    A[MCP Client] --> B[MCP Guard]
+    B --> C[MCP Server]
+    C --> D[Tool Output]
+    D --> B
+    B --> E{GA Guardrail}
+    E -->|Safe| A
+    E -->|Blocked| F[Alert]
+```
+
 ## Usage
 
 ### Direct Usage with npx
