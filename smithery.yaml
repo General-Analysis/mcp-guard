@@ -1,0 +1,36 @@
+name: mcp-guard
+command: node
+args:
+  - /app/dist/index.js
+  - "[]"  # Empty array of servers by default, can be overridden
+description: |
+  An MCP guardrail with built-in AI-powered moderation that aggregates multiple MCP servers into one secure interface.
+  
+  This server acts as a protective layer that can wrap other MCP servers, providing:
+  - AI-powered moderation to prevent prompt injection attacks
+  - Transparent proxying of tools, prompts, and resources
+  - Support for both local and remote MCP servers
+  
+  ## Configuration
+  
+  The server expects a JSON array of server configurations as the second argument. Each server config should have:
+  - name: The name of the server
+  - command: The command to run the server
+  - args: Array of arguments for the command
+  
+  Example configuration:
+  ```json
+  [{
+    "name": "filesystem",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/directory"]
+  }]
+  ```
+  
+  ## Environment Variables
+  
+  - API_KEY: API key for General Analysis moderation service (required if ENABLE_GUARD_API is true)
+  - ENABLE_GUARD_API: Set to "true" to enable AI-powered moderation (default: "false")
+env:
+  API_KEY: "your-general-analysis-api-key"
+  ENABLE_GUARD_API: "true" 
