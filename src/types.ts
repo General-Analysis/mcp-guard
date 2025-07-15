@@ -2,21 +2,34 @@ import { z } from "zod";
 
 // Server configuration schemas
 export const StdioServerConfigSchema = z.object({
-  name: z.string(),
-  command: z.string(),
-  args: z.array(z.string()).optional().default([]),
-  env: z.record(z.string()).optional().default({}),
-});
+  name: z.string()
+    .describe("Unique name for this server. Will be used as a prefix for all tools, prompts, and resources from this server."),
+  command: z.string()
+    .describe("Command to execute the MCP server (e.g., 'npx', 'python', 'node')"),
+  args: z.array(z.string())
+    .optional()
+    .default([])
+    .describe("Array of command line arguments to pass to the server command"),
+  env: z.record(z.string())
+    .optional()
+    .default({})
+    .describe("Environment variables to set when launching the server"),
+})
+  .describe("Configuration for a local MCP server that runs as a subprocess via stdio transport");
 
 export const RemoteServerConfigSchema = z.object({
-  name: z.string(),
-  url: z.string(),
-});
+  name: z.string()
+    .describe("Unique name for this server. Will be used as a prefix for all tools, prompts, and resources from this server."),
+  url: z.string()
+    .describe("URL of the remote MCP server (supports both HTTP streaming and SSE transports)"),
+})
+  .describe("Configuration for a remote MCP server accessible via HTTP");
 
 export const ServerConfigSchema = z.union([
   StdioServerConfigSchema,
   RemoteServerConfigSchema,
-]);
+])
+  .describe("MCP server configuration - can be either a local stdio server or a remote HTTP server");
 
 export type ServerConfig = z.infer<typeof ServerConfigSchema>;
 
