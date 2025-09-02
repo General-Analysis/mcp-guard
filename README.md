@@ -21,7 +21,7 @@ The easiest way to get started is using the General Analysis CLI tool:
 
 ```bash
 # Install the CLI tool
-pip3 install generalanalysis
+pip3 install generalanalysis==0.1.7
 
 # Login to your account
 ga login
